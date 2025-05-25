@@ -37,10 +37,10 @@
   <script>
     async function fetchPosts() {
       try {
-        const res = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent("https://dmvdrive.substack.com/feed"));
-        const data = await res.json();
+        const res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent("https://dmvdrive.substack.com/feed"));
+        const text = await res.text();
         const parser = new DOMParser();
-        const xml = parser.parseFromString(data.contents, "application/xml");
+        const xml = parser.parseFromString(text, "application/xml");
         const items = xml.querySelectorAll("item");
 
         const postsList = document.getElementById("posts");
