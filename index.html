@@ -18,7 +18,7 @@
 
   <script>
     async function loadPosts() {
-      const rssToJson = "https://api.rss2json.com/v1/api.json?rss_url=https://thedmvdrive.substack.com/feed";
+      const rssToJson = "https://api.rss2json.com/v1/api.json?rss_url=https://dmvdrive.substack.com/feed";
       const res = await fetch(rssToJson);
       const data = await res.json();
       const postsDiv = document.getElementById("posts");
