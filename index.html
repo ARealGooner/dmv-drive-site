@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The DMV Drive</title>
+  <style>
+    body { font-family: sans-serif; max-width: 700px; margin: auto; padding: 2rem; }
+    h1 { text-align: center; }
+    .post { margin-bottom: 2rem; }
+    .post-title { font-size: 1.2rem; font-weight: bold; }
+    .post-date { color: gray; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <h1>The DMV Drive</h1>
+  <div id="posts">Loading posts...</div>
+
+  <script>
+    async function loadPosts() {
+      const rssToJson = "https://api.rss2json.com/v1/api.json?rss_url=https://thedmvdrive.substack.com/feed";
+      const res = await fetch(rssToJson);
+      const data = await res.json();
+      const postsDiv = document.getElementById("posts");
+      postsDiv.innerHTML = "";
+
+      data.items.forEach(item => {
+        const post = document.createElement("div");
+        post.className = "post";
+        post.innerHTML = `
+          <div class="post-title"><a href="${item.link}" target="_blank">${item.title}</a></div>
+          <div class="post-date">${new Date(item.pubDate).toLocaleDateString()}</div>
+        `;
+        postsDiv.appendChild(post);
+      });
+    }
+
+    loadPosts();
+  </script>
+</body>
+</html>
