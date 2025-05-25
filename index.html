@@ -3,75 +3,68 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>The DMV Drive</title>
+  <title>DMV Drive</title>
   <style>
     body {
-      font-family: sans-serif;
-      max-width: 700px;
-      margin: auto;
-      padding: 2rem;
-      background: #f9f9f9;
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1rem;
     }
     h1 {
       text-align: center;
-      color: #222;
     }
-    .post {
-      background: white;
-      padding: 1rem;
-      border-radius: 8px;
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
       margin-bottom: 1rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    .post-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-    .post-title a {
+    a {
       text-decoration: none;
       color: #0070f3;
     }
-    .post-title a:hover {
+    a:hover {
       text-decoration: underline;
-    }
-    .post-date {
-      color: gray;
-      font-size: 0.9rem;
-      margin-top: 4px;
     }
   </style>
 </head>
 <body>
-  <h1>The DMV Drive</h1>
-  <div id="posts">Loading posts...</div>
+  <h1>DMV Drive</h1>
+  <ul id="posts">Loading posts...</ul>
 
   <script>
-    async function loadPosts() {
+    async function fetchPosts() {
       try {
-        const res = await fetch("https://api.rss2json.com/v1/api.json?rss_url=https://dmvdrive.substack.com/feed");
+        const res = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent("https://dmvdrive.substack.com/feed"));
         const data = await res.json();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(data.contents, "application/xml");
+        const items = xml.querySelectorAll("item");
 
-        const postsDiv = document.getElementById("posts");
-        postsDiv.innerHTML = "";
+        const postsList = document.getElementById("posts");
+        postsList.innerHTML = ""; // Clear loading text
 
-        data.items.forEach(item => {
-          const post = document.createElement("div");
-          post.className = "post";
-          post.innerHTML = `
-            <div class="post-title">
-              <a href="${item.link}" target="_blank" rel="noopener">${item.title}</a>
-            </div>
-            <div class="post-date">${new Date(item.pubDate).toLocaleDateString()}</div>
-          `;
-          postsDiv.appendChild(post);
+        items.forEach(item => {
+          const title = item.querySelector("title").textContent;
+          const link = item.querySelector("link").textContent;
+
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = link;
+          a.textContent = title;
+          a.target = "_blank";
+          li.appendChild(a);
+          postsList.appendChild(li);
         });
-      } catch (err) {
-        document.getElementById("posts").innerText = "Failed to load posts.";
-        console.error("RSS load error:", err);
+      } catch (error) {
+        document.getElementById("posts").textContent = "Failed to load posts.";
+        console.error("Error fetching posts:", error);
       }
     }
 
-    loadPosts();
+    fetchPosts();
   </script>
 </body>
 </html>
