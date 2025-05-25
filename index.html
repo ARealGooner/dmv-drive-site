@@ -36,8 +36,11 @@
 
   <script>
     async function fetchPosts() {
+      const proxyUrl = "https://thingproxy.freeboard.io/fetch/";
+      const feedUrl = "https://dmvdrive.substack.com/feed";
+
       try {
-        const res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent("https://dmvdrive.substack.com/feed"));
+        const res = await fetch(proxyUrl + feedUrl);
         const text = await res.text();
         const parser = new DOMParser();
         const xml = parser.parseFromString(text, "application/xml");
@@ -47,8 +50,8 @@
         postsList.innerHTML = ""; // Clear loading text
 
         items.forEach(item => {
-          const title = item.querySelector("title").textContent;
-          const link = item.querySelector("link").textContent;
+          const title = item.querySelector("title")?.textContent || "No title";
+          const link = item.querySelector("link")?.textContent || "#";
 
           const li = document.createElement("li");
           const a = document.createElement("a");
