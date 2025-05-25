@@ -5,11 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>The DMV Drive</title>
   <style>
-    body { font-family: sans-serif; max-width: 700px; margin: auto; padding: 2rem; }
-    h1 { text-align: center; }
-    .post { margin-bottom: 2rem; }
-    .post-title { font-size: 1.2rem; font-weight: bold; }
-    .post-date { color: gray; font-size: 0.9rem; }
+    body {
+      font-family: sans-serif;
+      max-width: 700px;
+      margin: auto;
+      padding: 2rem;
+      background: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+      color: #222;
+    }
+    .post {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .post-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    .post-title a {
+      text-decoration: none;
+      color: #0070f3;
+    }
+    .post-title a:hover {
+      text-decoration: underline;
+    }
+    .post-date {
+      color: gray;
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
   </style>
 </head>
 <body>
@@ -18,21 +47,28 @@
 
   <script>
     async function loadPosts() {
-      const rssToJson = "https://api.rss2json.com/v1/api.json?rss_url=https://dmvdrive.substack.com/feed";
-      const res = await fetch(rssToJson);
-      const data = await res.json();
-      const postsDiv = document.getElementById("posts");
-      postsDiv.innerHTML = "";
+      try {
+        const res = await fetch("https://api.rss2json.com/v1/api.json?rss_url=https://dmvdrive.substack.com/feed");
+        const data = await res.json();
 
-      data.items.forEach(item => {
-        const post = document.createElement("div");
-        post.className = "post";
-        post.innerHTML = `
-          <div class="post-title"><a href="${item.link}" target="_blank">${item.title}</a></div>
-          <div class="post-date">${new Date(item.pubDate).toLocaleDateString()}</div>
-        `;
-        postsDiv.appendChild(post);
-      });
+        const postsDiv = document.getElementById("posts");
+        postsDiv.innerHTML = "";
+
+        data.items.forEach(item => {
+          const post = document.createElement("div");
+          post.className = "post";
+          post.innerHTML = `
+            <div class="post-title">
+              <a href="${item.link}" target="_blank" rel="noopener">${item.title}</a>
+            </div>
+            <div class="post-date">${new Date(item.pubDate).toLocaleDateString()}</div>
+          `;
+          postsDiv.appendChild(post);
+        });
+      } catch (err) {
+        document.getElementById("posts").innerText = "Failed to load posts.";
+        console.error("RSS load error:", err);
+      }
     }
 
     loadPosts();
